@@ -1,6 +1,7 @@
 const BlockChainService = require('../services');
 const Block = require("../models/block");
 const MemPool = require("../models/memPool");
+const RequestObject = require("../models/requestObject");
 
 class BlockChainController {
   
@@ -47,12 +48,7 @@ class BlockChainController {
     this.app.post("/requestValidation", (req, res) => {
       const { address } = req.body;
       this.memPool.addRequestToPool({ walletAddress: address });
-      res.send({ 
-        walletAddress: address,
-        requestTimeStamp: 1234,
-        message: "hello",
-        validationWindow:  300
-      })
+      res.send(new RequestObject(address, 100, 'msg', 300));
     });
   }
 
