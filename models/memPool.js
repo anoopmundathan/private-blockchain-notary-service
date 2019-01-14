@@ -1,4 +1,5 @@
 const RequestObject = require('./requestObject');
+const bitcoinMessage = require('bitcoinjs-message');
 
 class MemPool {
 
@@ -37,6 +38,18 @@ class MemPool {
   getTimeStamp() {
     return new Date().getTime().toString().slice(0, -3);
   }
+
+  validateRequest(walletAddress, signature) {
+    
+    const request = this.memPool[walletAddress] || null;
+
+    if (!request) {
+      return false;  
+    }
+
+    let isValid = bitcoinMessage.verify(request.message, walletAddress, signature);
+    return isValid;
+}
 
 }
 

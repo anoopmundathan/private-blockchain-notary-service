@@ -12,6 +12,7 @@ class BlockChainController {
     this.getBlockByHeight();
     this.postBlock();
     this.requestValidation();
+    this.validateRequest();
   }
 
   getBlockByHeight() {
@@ -49,6 +50,23 @@ class BlockChainController {
       const { address } = req.body;
       const requestObject = this.memPool.addRequestValidation({ walletAddress: address });
       res.send(requestObject);
+    });
+  }
+
+  validateRequest() {
+    this.app.post("/message-signature/validate", (req, res) => {
+        const { address, signature } = req.body;
+        if (!address || !signature) {
+            res.status(400).send('The address and the signature are required');
+        } else {
+            const isValid = this.memPool.validateRequest(address, signature);
+            if (!isValid) {
+                res.status(400).send('Not a valid signature or request');
+            } else {
+                // const newReq = this.memPool.addRequestToValidMempool(address);
+                res.send(newReq);
+            }
+        }
     });
   }
 
