@@ -11,7 +11,7 @@ class BlockChain {
     console.log("length", length);
     if (length === -1) {
       const genesisBlock = JSON.stringify(BlockChain.createGenesisBlock());
-      const newGenesisBlock = await levelDB.addLevelDBData(0, genesisBlock);
+      const newGenesisBlock = await levelDB.addData(0, genesisBlock);
       if (newGenesisBlock) {
         console.log('Genesis Block created');
       }
@@ -25,6 +25,10 @@ class BlockChain {
     genesisBlock.time = new Date().getTime().toString().slice(0, -3);
     genesisBlock.hash = SHA256(JSON.stringify(genesisBlock)).toString();
     return genesisBlock;
+  }
+
+  getBlock(height) {
+    return levelDB.getData(height);
   }
 
 }

@@ -11,10 +11,13 @@ class BlockChainController {
   getBlockByHeight() {
     this.app.get("/block/:height", (req, res) => {
       const { height } = req.params;
-      this.blockChainService.initBlockChain()
+      this.blockChainService.getBlockByHeight(height)
       .then((block) => {
         res.status(200).json(block);
-      });
+      })
+      .catch((err) => {
+        res.status(404).json(err);
+      })
     });
   }
 

@@ -13,6 +13,10 @@ class BlockChainService {
     return this.blockChain;
   }
 
+  async getBlockByHeight(height) {
+    const blockChain = await this.initBlockChain();
+    return JSON.parse(await blockChain.getBlock(height));
+  }
 
 }
 

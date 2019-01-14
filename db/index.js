@@ -13,7 +13,7 @@ class LevelDB {
         .on('data', (data) => {
           height++;
         })
-        .on('error', () => {
+        .on('error', (error) => {
           reject(error);
         })
         .on('close', () => {
@@ -22,18 +22,29 @@ class LevelDB {
     });
   }
 
-  addLevelDBData(key, value) {
+  addData(key, value) {
     return new Promise((resolve, reject) => {
       this.db.put(key, value, function (err) {
         if (err) {
-          console.log('Block ' + key + ' submission failed', err);
+          console.log('Block ' + key + ' adding failed', err);
           reject(err);
         }
         resolve(value);
       });
     });
   }
-  
+
+  getData(key) {
+    return new Promise((resolve, reject) => {
+      this.db.get(key, function (err, value) {
+        if (err) {
+          reject(-1);
+        };
+        resolve(value);
+      })
+    });
+  }
+
 }
 
 module.exports = (dbLocation) => new LevelDB(dbLocation);
