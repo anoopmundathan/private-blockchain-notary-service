@@ -31,6 +31,24 @@ class BlockChain {
     return levelDB.getData(height);
   }
 
+  async addBlock(newBlock) {
+
+    let currentHeight = await levelDB.getHeight();
+
+    if (currentHeight === -1) {
+      console.log('Adding Genesis');
+      const genesisBlock = await levelDB.addData(0, JSON.stringify(BlockChain.createGenesisBlock()));
+    }
+
+    currentHeight = await levelDB.getHeight() + 1;
+    newBlock.height = currentHeight;
+    newBlock.time = new Date().getTime().toString().slice(0, -3);
+    newBlock.previousBlockHash = JSON.parse(await levelDB.getData(currentHeight - 1)).hash;
+    newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
+    const newGeneratedBlock = await levelDB.addData(currentHeight, JSON.stringify(newBlock));
+    return newGeneratedBlock;
+  }
+
 }
 
 module.exports = BlockChain;

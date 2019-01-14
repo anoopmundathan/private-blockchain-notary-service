@@ -18,6 +18,10 @@ class BlockChainService {
     return JSON.parse(await blockChain.getBlock(height));
   }
 
+  async postBlock(block) {
+    const blockChain = await this.initBlockChain();
+    return JSON.parse(await blockChain.addBlock(block));
+  }
 }
 
 module.exports = BlockChainService;

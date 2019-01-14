@@ -7,8 +7,8 @@ const blockChainController = require('./controllers');
 const app = express();
 const PORT = 8000;
 
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('tiny'));
 
 blockChainController(app);
