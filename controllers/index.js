@@ -59,11 +59,11 @@ class BlockChainController {
         if (!address || !signature) {
             res.status(400).send('The address and the signature are required');
         } else {
-            const isValid = this.memPool.validateRequest(address, signature);
+            const isValid = this.memPool.validateRequestByWallet(address, signature);
             if (!isValid) {
                 res.status(400).send('Not a valid signature or request');
             } else {
-                // const newReq = this.memPool.addRequestToValidMempool(address);
+                const newReq = this.memPool.addRequest(address);
                 res.send(newReq);
             }
         }

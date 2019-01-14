@@ -1,10 +1,12 @@
 const RequestObject = require('./requestObject');
+const RequestObjectValidated = require('./requestObjectValidated');
 const bitcoinMessage = require('bitcoinjs-message');
 
 class MemPool {
 
   constructor() {
       this.memPool = [];
+      this.mempoolValid = [];
       this.timeoutRequests = [];
   }
 
@@ -24,14 +26,20 @@ class MemPool {
     }
   }
 
-  setValidationWindow(requestObject) {
-    const timeElapse = this.getTimeStamp() - requestObject.requestTimeStamp;    
-    const timeLeft = (3000 / 1000) - timeElapse;
-    requestObject.validationWindow = timeLeft;
+  setValidationWindow(request) {
+    const timeLeft = this.getValidationWindow(request);
+    request.validationWindow = timeLeft;
   }
 
+  getValidationWindow(request) {
+      const timeElapse = this.getTimeStamp() - request.requestTimeStamp;
+      const timeLeft = (3000 / 1000) - timeElapse;
+      request.validationWindow = timeLeft;
+      return timeLeft;
+  }
 
   removeValidationRequest(address) {
+      this.timeoutRequests = this.timeoutRequests.filter(r => r.walletAddress !== walletAddress);
       console.log(`Remove Address: ${address}`);
   }
 
@@ -39,7 +47,9 @@ class MemPool {
     return new Date().getTime().toString().slice(0, -3);
   }
 
-  validateRequest(walletAddress, signature) {
+
+
+  validateRequestByWallet(walletAddress, signature) {
     
     const request = this.memPool[walletAddress] || null;
 
@@ -49,7 +59,22 @@ class MemPool {
 
     let isValid = bitcoinMessage.verify(request.message, walletAddress, signature);
     return isValid;
-}
+  }
+
+  addRequest() {
+    const request = this.memPool[walletAddress] || null;
+    
+    if (!request) {
+      return false;  
+    }
+
+    const { requestTimeStamp, message } = request;
+    const validationWindow = this.getValidationWindow(request);
+    const newReq = new RequestObjectValidated(walletAddress, requestTimeStamp, message, validationWindow);
+    this.removeValidationRequest(walletAddress);
+    this.mempoolValid[walletAddress] = newReq;
+    return newReq;
+  }
 
 }
 
