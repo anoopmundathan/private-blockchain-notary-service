@@ -1,16 +1,41 @@
+const RequestObject = require('./requestObject');
+
 class MemPool {
 
   constructor() {
-      this.mempool = [];
+      this.memPool = [];
       this.timeoutRequests = [];
   }
 
-  addRequestToPool(request) {
-      this.timeoutRequests[request.walletAddress] = setTimeout(() => { this.removeValidationRequest(request.walletAddress) }, 3000);
+  addRequestValidation({ walletAddress }) {
+    const isRequestAlreadyInPool = this.timeoutRequests[walletAddress] ? true : false;
+
+    if (isRequestAlreadyInPool) {
+      const cachedRequest = this.memPool[walletAddress];
+      this.setValidationWindow(cachedRequest);
+      return cachedRequest;
+    } else {
+      this.timeoutRequests[walletAddress] = setTimeout(() => { this.removeValidationRequest(walletAddress) }, 3000);
+      const newRequest = new RequestObject(walletAddress, this.getTimeStamp());
+      this.memPool[walletAddress] = newRequest;
+      this.setValidationWindow(newRequest);
+      return newRequest;
+    }
   }
+
+  setValidationWindow(requestObject) {
+    const timeElapse = this.getTimeStamp() - requestObject.requestTimeStamp;    
+    const timeLeft = (3000 / 1000) - timeElapse;
+    requestObject.validationWindow = timeLeft;
+  }
+
 
   removeValidationRequest(address) {
       console.log(`Remove Address: ${address}`);
+  }
+
+  getTimeStamp() {
+    return new Date().getTime().toString().slice(0, -3);
   }
 
 }

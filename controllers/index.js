@@ -47,8 +47,8 @@ class BlockChainController {
   requestValidation() {
     this.app.post("/requestValidation", (req, res) => {
       const { address } = req.body;
-      this.memPool.addRequestToPool({ walletAddress: address });
-      res.send(new RequestObject(address, 100, 'msg', 300));
+      const requestObject = this.memPool.addRequestValidation({ walletAddress: address });
+      res.send(requestObject);
     });
   }
 
