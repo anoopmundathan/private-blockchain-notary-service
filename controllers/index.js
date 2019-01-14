@@ -1,13 +1,16 @@
 const BlockChainService = require('../services');
 const Block = require("../models/block");
+const MemPool = require("../models/memPool");
 
 class BlockChainController {
   
   constructor(app) {
     this.app = app;
+    this.memPool = new MemPool();
     this.blockChainService = new BlockChainService();
     this.getBlockByHeight();
     this.postBlock();
+    this.requestValidation();
   }
 
   getBlockByHeight() {
@@ -37,6 +40,19 @@ class BlockChainController {
       } else {
         res.status(400).json("post error");
       }
+    });
+  }
+
+  requestValidation() {
+    this.app.post("/requestValidation", (req, res) => {
+      const { address } = req.body;
+      this.memPool.addRequestToPool({ walletAddress: address });
+      res.send({ 
+        walletAddress: address,
+        requestTimeStamp: 1234,
+        message: "hello",
+        validationWindow:  300
+      })
     });
   }
 
