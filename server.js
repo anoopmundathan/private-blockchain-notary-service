@@ -52,6 +52,17 @@ app.post('/block', (req, res) => {
 
 });
 
+app.post('/requestValidation', (req, res) => {
+  const timeStamp = new Date().getTime().toString().slice(0, -3)
+  const validationWindow = 300
+  
+  res.json({
+    timeStamp,
+    validationWindow
+  })
+
+})
+
 app.listen(8000, () => {
   console.log(`Server running at port ${PORT}`)
 });

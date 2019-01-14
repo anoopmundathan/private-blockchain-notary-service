@@ -1,5 +1,5 @@
-# restful-web-api
-Udacity Blockchain Nanodegree - Project 3: RESTful Web API with Node.js
+# private-blockchain-notary-service
+Udacity Blockchain Nanodegree - Project 4: Build a Private Blockchain Notary Service
 
 ## Framework used
 
@@ -7,8 +7,8 @@ Express.js
 
 ### Setup
 ```
-$ git clone https://github.com/anoopmundathan/restful-web-api.git
-$ cd restful-web-api
+$ git clone https://github.com/anoopmundathan/private-blockchain-notary-service.git
+$ cd private-blockchain-notary-service
 ```
 ### Install
 ```
