@@ -2,6 +2,7 @@ const BlockChainService = require('../services');
 const Block = require("../models/block");
 const MemPool = require("../models/memPool");
 const Star = require("../models/star");
+const hex2ascii = require("hex2ascii");
 
 class BlockChainController {
   
@@ -10,6 +11,7 @@ class BlockChainController {
     this.memPool = new MemPool();
     this.blockChainService = new BlockChainService();
     this.getBlockByHeight();
+    this.getBlockByHash();
     this.postBlock();
     this.requestValidation();
     this.validateRequest();
@@ -26,6 +28,30 @@ class BlockChainController {
       .catch((err) => {
         res.status(404).json(err);
       })
+    });
+  }
+
+  getBlockByHash() {
+    this.app.get("/stars/:hash", async (req, res) => {
+      const { hash } = req.params;
+      const hashParameters = hash.split(':');
+      const hashParameter = hashParameters[0];
+      const hashValue = hashParameters[1];
+      if (hashParameter !== "hash" || !hashValue) {
+          res.status(400).send("hash parameter is required");
+      } else {
+          
+          const block = await this.blockChainService.getBlockByHash(hashValue).catch((err) => {
+              res.status(500).json(err);
+          });
+
+          if (block === -1) {
+              res.status(404).json(err);
+          } else {
+              block.body.star.storyDecoded = hex2ascii(block.body.star.story);
+              res.status(200).json(block);
+          }
+      }
     });
   }
 
@@ -83,8 +109,9 @@ class BlockChainController {
                 res.status(400).send('The request has expired or already used.');
             } else {
                 this.memPool.removeValidationValidRequest(address);
-                const newStar = new Star(star);
-                const newBlock = await this.blockService.addNewBlock(newStar);
+                const newStar = {star : new Star(star)};
+                const newBlock = await this.blockService.addNewBlock(new Block(newStar));
+                newBlock.body.star.storyDecoded = hex2ascii(newBlock.body.star.story);
                 res.send(newBlock);
             }
 

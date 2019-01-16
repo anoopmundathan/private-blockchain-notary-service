@@ -22,6 +22,12 @@ class BlockChainService {
     const blockChain = await this.initBlockChain();
     return JSON.parse(await blockChain.addBlock(block));
   }
+
+  async getBlockByHash(hash) {
+    const blockChain = await this.initBlockChain();
+    return JSON.parse(await blockChain.getBlockByHash(hash));
+  }
+
 }
 
 module.exports = BlockChainService;

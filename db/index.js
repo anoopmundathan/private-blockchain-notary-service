@@ -26,7 +26,7 @@ class LevelDB {
     return new Promise((resolve, reject) => {
       this.db.put(key, value, function (err) {
         if (err) {
-          console.log('Block ' + key + ' adding failed', err);
+          console.log(`Block${key} adding failed ${err}`);
           reject(err);
         }
         resolve(value);
@@ -45,6 +45,31 @@ class LevelDB {
     });
   }
 
+  getBlockByHash(hash) {
+    let block = -1;
+    return new Promise((resolve, reject) => {
+      this.db.createReadStream().on('data', function (data) {
+        const blockParsed = JSON.parse(data.value);
+        if (blockParsed.hash === hash) {
+          block = data.value;
+        }
+      }).on('error', function (err) {
+        console.log('Unable to read data stream!', err);
+        reject(err);
+      }).on('close', function () {
+        if (block === -1) {
+          resolve(-1);
+        }
+        resolve(block);
+      });
+
+    });
+  }
+
+  getBlockByHash(blockHash) {
+    return db.getBlockByHash(blockHash);
+  }
+  
 }
 
 module.exports = (dbLocation) => new LevelDB(dbLocation);

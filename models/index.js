@@ -49,6 +49,10 @@ class BlockChain {
     return newGeneratedBlock;
   }
 
+  getBlockByHash(blockHash) {
+    return levelDB.getBlockByHash(blockHash);
+  }
+
 }
 
 module.exports = BlockChain;
