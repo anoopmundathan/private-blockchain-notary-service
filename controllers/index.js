@@ -1,7 +1,7 @@
 const BlockChainService = require('../services');
 const Block = require("../models/block");
 const MemPool = require("../models/memPool");
-const RequestObject = require("../models/requestObject");
+const Star = require("../models/star");
 
 class BlockChainController {
   
@@ -13,6 +13,7 @@ class BlockChainController {
     this.postBlock();
     this.requestValidation();
     this.validateRequest();
+    this.registerNewStar();
   }
 
   getBlockByHeight() {
@@ -69,6 +70,27 @@ class BlockChainController {
         }
     });
   }
+
+  registerNewStar() {
+    this.app.post("/star", async (req, res) => {
+        const { address, star } = req.body;
+        if (!address || !star || !star.ra
+            || !star.dec || !star.story) {
+            res.status(400).send('address and star properties are mandatory');
+        } else {
+            const validRequest = this.memPool.getExistingValidRequest(address);
+            if (!validRequest) {
+                res.status(400).send('The request has expired or already used.');
+            } else {
+                this.memPool.removeValidationValidRequest(address);
+                const newStar = new Star(star);
+                const newBlock = await this.blockService.addNewBlock(newStar);
+                res.send(newBlock);
+            }
+
+        }
+    });
+}
 
 }
 

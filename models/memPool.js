@@ -8,6 +8,7 @@ class MemPool {
       this.memPool = [];
       this.mempoolValid = [];
       this.timeoutRequests = [];
+      this.timeoutValidRequests = [];
   }
 
   addRequestValidation({ walletAddress }) {
@@ -38,9 +39,12 @@ class MemPool {
       return timeLeft;
   }
 
-  removeValidationRequest(address) {
+  removeValidationRequest(walletAddress) {
       this.timeoutRequests = this.timeoutRequests.filter(r => r.walletAddress !== walletAddress);
-      console.log(`Remove Address: ${address}`);
+  }
+
+   removeValidationValidRequest(walletAddress) {
+    this.timeoutValidRequests = this.timeoutValidRequests.filter(r => r.walletAddress !== walletAddress);
   }
 
   getTimeStamp() {
@@ -72,6 +76,7 @@ class MemPool {
     const validationWindow = this.getValidationWindow(request);
     const newReq = new RequestObjectValidated(walletAddress, requestTimeStamp, message, validationWindow);
     this.removeValidationRequest(walletAddress);
+    this.timeoutValidRequests[walletAddress] = setTimeout(() => { this.removeValidationValidRequest(walletAddress) }, 30 * 60 * 1000);
     this.mempoolValid[walletAddress] = newReq;
     return newReq;
   }
