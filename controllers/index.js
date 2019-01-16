@@ -12,6 +12,7 @@ class BlockChainController {
     this.blockChainService = new BlockChainService();
     this.getBlockByHeight();
     this.getBlockByHash();
+    this.getBlockByAddress();
     this.postBlock();
     this.requestValidation();
     this.validateRequest();
@@ -42,6 +43,29 @@ class BlockChainController {
       } else {
           
           const block = await this.blockChainService.getBlockByHash(hashValue).catch((err) => {
+              res.status(500).json(err);
+          });
+
+          if (block === -1) {
+              res.status(404).json(err);
+          } else {
+              block.body.star.storyDecoded = hex2ascii(block.body.star.story);
+              res.status(200).json(block);
+          }
+      }
+    });
+  }
+
+  getBlockByAddress() {
+    this.app.get("/stars/:address", async (req, res) => {
+      const { hash } = req.params;
+      const hashParameters = hash.split(':');
+      const hashParameter = hashParameters[0];
+      const hashValue = hashParameters[1];
+      if (hashParameter !== "address" || !hashValue) {
+          res.status(400).send("address parameter is required");
+      } else {
+          const block = await this.blockChainService.getBlockByAddress(hashValue).catch((err) => {
               res.status(500).json(err);
           });
 
@@ -109,7 +133,7 @@ class BlockChainController {
                 res.status(400).send('The request has expired or already used.');
             } else {
                 this.memPool.removeValidationValidRequest(address);
-                const newStar = {star : new Star(star)};
+                const newStar = {address: address, star : new Star(star)};
                 const newBlock = await this.blockService.addNewBlock(new Block(newStar));
                 newBlock.body.star.storyDecoded = hex2ascii(newBlock.body.star.story);
                 res.send(newBlock);

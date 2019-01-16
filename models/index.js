@@ -53,6 +53,10 @@ class BlockChain {
     return levelDB.getBlockByHash(blockHash);
   }
 
+  getBlockByWalletAddress(address) {
+    return levelDB.getBlockByWalletAddress(address);
+  }
+
 }
 
 module.exports = BlockChain;

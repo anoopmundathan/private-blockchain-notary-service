@@ -69,6 +69,27 @@ class LevelDB {
   getBlockByHash(blockHash) {
     return db.getBlockByHash(blockHash);
   }
+
+  getBlockByWalletAddress(address) {
+    let blocks = [];
+    return new Promise((resolve, reject) => {
+      this.db.createReadStream().on('data', function (data) {
+        const blockParsed = JSON.parse(data.value);
+        if (!!blockParsed.body.address && blockParsed.body.address === address) {
+          blocks.push(blockParsed);
+        }
+      }).on('error', function (err) {
+        console.log('Unable to read data stream!', err);
+        reject(err);
+      }).on('close', function () {
+        if (blocks.length === 0) {
+          resolve(-1);
+        }
+        resolve(blocks);
+      });
+
+    });
+  }
   
 }
 

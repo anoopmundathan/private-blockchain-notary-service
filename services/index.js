@@ -28,6 +28,11 @@ class BlockChainService {
     return JSON.parse(await blockChain.getBlockByHash(hash));
   }
 
+  async getBlockByAddress(address) {
+    const blockChain = await this.initBlockChain();
+    return JSON.parse(await blockChain.getBlockByWalletAddress(address));
+  }
+
 }
 
 module.exports = BlockChainService;
