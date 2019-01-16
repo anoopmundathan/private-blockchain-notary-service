@@ -66,10 +66,6 @@ class LevelDB {
     });
   }
 
-  getBlockByHash(blockHash) {
-    return db.getBlockByHash(blockHash);
-  }
-
   getBlockByWalletAddress(address) {
     let blocks = [];
     return new Promise((resolve, reject) => {
