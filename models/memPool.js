@@ -19,7 +19,7 @@ class MemPool {
       this.setValidationWindow(cachedRequest);
       return cachedRequest;
     } else {
-      this.timeoutRequests[walletAddress] = setTimeout(() => { this.removeValidationRequest(walletAddress) }, 3000);
+      this.timeoutRequests[walletAddress] = setTimeout(() => { this.removeValidationRequest(walletAddress) }, 5 * 60 * 1000);
       const newRequest = new RequestObject(walletAddress, this.getTimeStamp());
       this.memPool[walletAddress] = newRequest;
       this.setValidationWindow(newRequest);
@@ -34,7 +34,7 @@ class MemPool {
 
   getValidationWindow(request) {
       const timeElapse = this.getTimeStamp() - request.requestTimeStamp;
-      const timeLeft = (3000 / 1000) - timeElapse;
+      const timeLeft = (5 * 60 * 1000 / 1000) - timeElapse;
       request.validationWindow = timeLeft;
       return timeLeft;
   }
