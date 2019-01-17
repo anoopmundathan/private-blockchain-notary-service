@@ -1,4 +1,4 @@
-const BlockChainService = require('../services');
+const BlockChainService = require('../services/index.js');
 const Block = require("../models/block");
 const MemPool = require("../models/memPool");
 const Star = require("../models/star");
@@ -13,7 +13,6 @@ class BlockChainController {
     this.getBlockByHeight();
     this.getBlockByHash();
     this.getBlockByAddress();
-    this.postBlock();
     this.requestValidation();
     this.validateRequest();
     this.registerNewStar();
@@ -79,23 +78,6 @@ class BlockChainController {
     });
   }
 
-  postBlock() {
-    this.app.post("/block", (req, res) => {
-      const { body } = req.body;
-      if (body) {
-        this.blockChainService.postBlock(new Block(body))
-        .then((block) => {
-          res.status(200).json(block)
-        })
-        .catch((err) => {
-          res.status(500).json(err)
-        })
-      } else {
-        res.status(400).json("post error");
-      }
-    });
-  }
-
   requestValidation() {
     this.app.post("/requestValidation", (req, res) => {
       const { address } = req.body;
@@ -141,7 +123,7 @@ class BlockChainController {
 
         }
     });
-}
+  }
 
 }
 

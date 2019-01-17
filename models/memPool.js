@@ -51,8 +51,6 @@ class MemPool {
     return new Date().getTime().toString().slice(0, -3);
   }
 
-
-
   validateRequestByWallet(walletAddress, signature) {
     
     const request = this.memPool[walletAddress] || null;
@@ -81,6 +79,10 @@ class MemPool {
     return newReq;
   }
 
+  getExistingValidRequest(address) {
+    return this.timeoutValidRequests[address] ? this.mempoolValid[address] : null
+  }
+  
 }
 
 module.exports = MemPool;
