@@ -116,7 +116,7 @@ class BlockChainController {
             } else {
                 this.memPool.removeValidationValidRequest(address);
                 const newStar = {address: address, star : new Star(star)};
-                const newBlock = await this.blockService.addNewBlock(new Block(newStar));
+                const newBlock = await this.blockChainService.postBlock(new Block(newStar));
                 newBlock.body.star.storyDecoded = hex2ascii(newBlock.body.star.story);
                 res.send(newBlock);
             }
