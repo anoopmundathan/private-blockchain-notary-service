@@ -63,7 +63,7 @@ class MemPool {
     return isValid;
   }
 
-  addRequest() {
+  addRequest(walletAddress) {
     const request = this.memPool[walletAddress] || null;
     
     if (!request) {
@@ -82,7 +82,7 @@ class MemPool {
   getExistingValidRequest(address) {
     return this.timeoutValidRequests[address] ? this.mempoolValid[address] : null
   }
-  
+
 }
 
 module.exports = MemPool;
