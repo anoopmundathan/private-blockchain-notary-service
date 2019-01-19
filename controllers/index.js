@@ -22,10 +22,17 @@ class BlockChainController {
       const { height } = req.params;
       this.blockChainService.getBlockByHeight(height)
       .then((block) => {
-        res.status(200).json(block);
+          if (block === -1) {
+            res.status(404).json(`There is no block with ${height}`);
+          } else {
+            if (height !== '0') {
+                block.body.star.storyDecoded = hex2ascii(block.body.star.story);
+            }
+            res.status(200).json(block);
+          }
       })
-      .catch((err) => {
-        res.status(404).json(err);
+      .catch(() => {
+        res.status(404).json(`Error while getting block`);
       })
     });
   }
