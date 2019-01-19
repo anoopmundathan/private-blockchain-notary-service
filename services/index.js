@@ -30,7 +30,7 @@ class BlockChainService {
 
   async getBlockByAddress(address) {
     const blockChain = await this.initBlockChain();
-    return JSON.parse(await blockChain.getBlockByWalletAddress(address));
+    return await blockChain.getBlockByWalletAddress(address);
   }
 
 }
